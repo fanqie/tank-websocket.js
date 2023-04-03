@@ -1,0 +1,57 @@
+{
+  "name": "tank-websocket.js",
+  "version": "1.0.0",
+  "description": "tank-websocket.js is a stable websocket client plugin with some really cool features",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run start-socket-serve && karma start && npm run stop-socket-serve",
+    "start-socket-serve": "pm2 restart ./test/mockServer.js",
+    "stop-socket-serve": "pm2 stop ./test/mockServer.js",
+    "build": "npx rollup -c rollup.config.js",
+    "tsc": "tsc"
+  },
+  "files": [
+    "lib",
+    "types",
+    "README.md",
+    "README_zh.md",
+    "LICENSE",
+    "tsconfig.json",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curry-trooper/tank-websocket.js.git"
+  },
+  "keywords": [
+    "tank-websocket.js",
+    "tank-websocket",
+    "websocket",
+    "ws",
+    "websocket-client"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/curry-trooper/tank-websocket.js/issues"
+  },
+  "homepage": "https://github.com/curry-trooper/tank-websocket.js#readme",
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "chai": "^4.3.7",
+    "karma": "^6.4.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-mocha": "^2.0.1",
+    "mocha": "^10.2.0",
+    "patch-package": "^6.5.1",
+    "pm2": "^5.3.0",
+    "rollup": "^3.20.2",
+    "ws": "^8.13.0",
+    "@babel/core": "^7.21.4"
+  },
+  "dependencies": {
+  }
+}

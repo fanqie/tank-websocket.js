@@ -1,18 +1,18 @@
-* English|[中文](README_zh.md)
-* 
-## Introduction
+* [English](README_zh.md)|中文
 
-tank-websocket.js is a stable websocket client plugin with some really cool features
+## 描述
 
-## feature
+tank-websocket.js 是一个稳定的websocket客户端插件，具有一些非常酷的特性
 
-- [x] support multiple instances/single cases, the global singleton mode in single page application
-- [x] support commonjs require, es6 import two import modes
-- [x] automatic reconnect mechanism
-- [x] event listener
-- [x] 0 dependencies
-- [x] high coverage unit tests
-- [x] support browser
+## 特征
+
+- [x] 支持多个实例/单个案例，单页应用程序中的全局单例模式
+- [x] 支持commonjs，es6导入两种导入模式
+- [x] 支持自动重新连接机制
+- [x] 支持事件侦听器
+- [x] 0个依赖项
+- [x] 单元测试高覆盖率
+- [x] 支持浏览器
 
 ## install
 
@@ -22,34 +22,33 @@ npm install tank-websocket.js
 yarn add tank-websocket.js
 ```
 
-## import
+## 导入
 
 ### commonjs
 
 ```javascript
 const TankWebSocket = require("tank-websocket.js");
-//or
+//或
 const {SocketClient, useSocketClient} = require("tank-websocket.js");
 ```
 
-### ES6+ import
+### ES6+ 导入
 
 ```javascript
 import TankWebSocket from "tank-websocket.js";
-//or
+//或
 import {SocketClient, useSocketClient} from "tank-websocket.js";
 ```
 
-### html tag
+### html 标签导入
 
 ```html
-
 <script src="https://unpkg.com/tank-websocket.js/lib/"></script>
 ```
 
-## init instance
+## 初始化
 
-### multiple instances
+### 多实例创建
 
 ```javascript
 const twsc = new TankWebSocket.SocketClient('ws://127.0.0.1:19198');
@@ -58,20 +57,25 @@ twsc.onOpen((event) => {
 })
 ```
 
-### single instance
+### 单例创建
 
-the global singleton mode in single page application
+单页应用程序中的全局单例模式
 
 ```javascript
 //main.js
+import TankWebSocket from "tank-websocket.js";
+
 TankWebSocket.useSocketClient('ws://127.0.0.1:19198');
-//other
+
+//其他文件
+import TankWebSocket from "tank-websocket.js";
+
 TankWebSocket.useSocketClient().onOpen((event) => {
     console.log("on open", event)
 })
 ```
 
-## examples
+## 例子
 
 ```javascript
 import TankWebSocket from "tank-websocket.js";
@@ -85,17 +89,17 @@ twsc.onOpen((event) => {
         // console.log("on error",JSON.parse(event.data)); //json data
     })
     /**
-     * send message
+     * 发送消息
      */
     twsc.send("hello tank man")
-    //or json data
+    //或 json data
     twsc.send(JSON.stringify({value: "hello tank man"}))
 
     /**
-     * close ws connect
+     * 主动关闭链接
      */
     twsc.close()
-    //or
+    //或
     twsc.disconnect()
 })
 
@@ -106,23 +110,24 @@ twsc.onClose((event) => {
     console.log("on close", event)
 })
 /**
- * get original websocket
+ * 获取浏览器原始ws对象
  */
 console.log(twsc.ws)
 /**
- * close debugger ,close output on console
+ * 关闭调试模式，控制台不会打印消息
  */
 twsc.setDebug(false)
 /**
- * set reConnect setInterval (default:1000 ms)
+ * 设置单次重连间隔时间 (默认:1000 ms)
  */
 twsc.setReConnectInterval(1000)
 
 /**
- * disable disconnecting retry links
+ * 禁止断开重试链接
  */
 twsc.disableReConnect(true)
 ```
 
 ## Apis
+
 [socketClient](./types/socketClient.d.ts)
