@@ -17,7 +17,6 @@ class SocketClient {
             if (this.useReConn && this.ws && this.ws.readyState > 1 && (new Date().getTime() - this.lastReConnTime) > this.interval) {
                 console.log("reconnect socket=》》》", this.url)
                 this.ws = new WebSocket(this.url)
-                this.status = true
             }
 
             if (this.ws) {
@@ -31,7 +30,6 @@ class SocketClient {
         this.setDebug(true)
         this.setReConnectInterval(1000)
         this.url = url
-
         this.ws = new WebSocket(url)
         this.checkConn()
         this.ws.addEventListener('message', (event) => {
@@ -73,18 +71,7 @@ class SocketClient {
 
     }
 
-    /**
-     * data a text string, ArrayBuffer or Blob
-     * @param data {string|any}
-     */
-    send(data) {
-        try {
-            this.ws.send(data)
-        } catch (e) {
-            console.log(e)
-        }
 
-    }
 
     setDebug(debug) {
         this.debug = debug
@@ -105,7 +92,18 @@ class SocketClient {
     setReConnectInterval(interval) {
         this.interval = interval
     }
+    /**
+     * data a text string, ArrayBuffer or Blob
+     * @param data {string|any}
+     */
+    send(data) {
+        try {
+            this.ws.send(data)
+        } catch (e) {
+            console.log(e)
+        }
 
+    }
     /**
      * Actively disconnect
      */

@@ -1,8 +1,6 @@
 describe('tank-websocket-client test', function () {
-
     let conn = null
     beforeEach(() => {
-
         const TankWebSocket = window.TankWebSocket
         conn = new TankWebSocket.SocketClient('ws://127.0.0.1:19198');
         conn.setDebug(false)
