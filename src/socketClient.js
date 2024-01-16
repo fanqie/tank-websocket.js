@@ -1,4 +1,8 @@
 class SocketClient {
+    /**
+     * WebSocket instance
+     * @type {WebSocket|null}
+     */
     ws = null
     events = {
         open: new Set(),
@@ -12,6 +16,10 @@ class SocketClient {
     url = ""
     useReConn = true
 
+    /**
+     * Check the connection status of the WebSocket instance
+     * @private
+     */
     checkConn() {
         setTimeout(() => {
             if (this.useReConn && this.ws && this.ws.readyState > 1 && (new Date().getTime() - this.lastReConnTime) > this.interval) {
@@ -25,6 +33,10 @@ class SocketClient {
         }, 1000)
     }
 
+    /**
+     * Create a WebSocket instance
+     * @param url {string} WebSocket url
+     */
     constructor(url) {
         this.useReConn = true
         this.setDebug(true)
@@ -71,15 +83,25 @@ class SocketClient {
 
     }
 
+    /**
+     * Get the WebSocket instance
+     * @return {WebSocket|null}
+     */
+    getOriginInstance() {
+        return this.ws;
+    }
 
-
+    /**
+     *  Set whether to print the log
+     * @param debug {boolean}
+     */
     setDebug(debug) {
         this.debug = debug
     }
 
     /**
      * Disable disconnecting retry links
-     * @param disable
+     * @param disable {boolean}
      */
     disableReConnect(disable = false) {
         this.useReConn = !disable
@@ -87,7 +109,7 @@ class SocketClient {
 
     /**
      * set reConnect setInterval (default:1000 ms)
-     * @param  {number} interval ms
+     * @param   interval {number} ms
      */
     setReConnectInterval(interval) {
         this.interval = interval
@@ -127,6 +149,37 @@ class SocketClient {
     }
 
     /**
+     * Check if the link is closed
+     * @return {boolean}
+     */
+    isClose() {
+        return this.ws.readyState === WebSocket.CLOSED;
+    }
+
+    /**
+     * Check if the link is connecting
+     * @return {boolean}
+     */
+    isConnecting() {
+        return this.ws.readyState === WebSocket.CONNECTING;
+    }
+
+    /**
+     * Check if the link is open
+     * @return {boolean}
+     */
+    isOpen() {
+        return this.ws.readyState === WebSocket.OPEN;
+    }
+
+    /**
+     * Check if the link is closing
+     * @return {boolean}
+     */
+    isClosing() {
+        return this.ws.readyState === WebSocket.CLOSING;
+    }
+    /**
      * Listen to the link success event, with superimposed features
      * @param func {Function}
      */
@@ -136,12 +189,22 @@ class SocketClient {
         }
     }
 
+    /**
+     * Listen to the link success event, with superimposed features
+     * @param event {string}
+     * @private
+     */
     _emitOpen(event) {
         this.events.open.forEach((func) => {
             func(event)
         })
     }
 
+    /**
+     *
+     * @param event
+     * @private
+     */
     _emitMessage(event) {
         this.events.message.forEach((func) => {
             func(event)

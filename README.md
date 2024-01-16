@@ -122,6 +122,27 @@ twsc.setReConnectInterval(1000)
  * disable disconnecting retry links
  */
 twsc.disableReConnect(true)
+/**
+ * Get the Origin WebSocket instance [new]
+ */
+const ws=twsc.getOriginInstance();
+/**
+ * Check if the link is closed [new]
+ */
+twsc.isClose();
+/**
+ * Check if the link is connecting [new]
+ */
+twsc.isConnecting();
+/**
+ * Check if the link is open [new]
+ */
+twsc.isOpen();
+/**
+ * Check if the link is closing [new]
+ */
+twsc.isClosing();
+
 ```
 
 ## Apis

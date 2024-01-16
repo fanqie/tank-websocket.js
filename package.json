@@ -1,6 +1,6 @@
 {
   "name": "tank-websocket.js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "tank-websocket.js is a stable websocket client plugin with some really cool features",
   "main": "lib/index.js",
   "scripts": {

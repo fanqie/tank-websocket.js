@@ -1,7 +1,15 @@
 export default SocketClient;
 declare class SocketClient {
-    constructor(url: any);
-    ws: any;
+    /**
+     * Create a WebSocket instance
+     * @param url {string} WebSocket url
+     */
+    constructor(url: string);
+    /**
+     * WebSocket instance
+     * @type {WebSocket|null}
+     */
+    ws: WebSocket | null;
     events: {
         open: Set<any>;
         message: Set<any>;
@@ -13,24 +21,36 @@ declare class SocketClient {
     interval: number;
     url: string;
     useReConn: boolean;
-    checkConn(): void;
-    status: boolean;
+    /**
+     * Check the connection status of the WebSocket instance
+     * @private
+     */
+    private checkConn;
+    /**
+     * Get the Origin WebSocket instance
+     * @return {WebSocket|null}
+     */
+    getOriginInstance(): WebSocket | null;
+    /**
+     *  Set whether to print the log
+     * @param debug {boolean}
+     */
+    setDebug(debug: boolean): void;
+    /**
+     * Disable disconnecting retry links
+     * @param disable {boolean}
+     */
+    disableReConnect(disable?: boolean): void;
+    /**
+     * set reConnect setInterval (default:1000 ms)
+     * @param   interval {number} ms
+     */
+    setReConnectInterval(interval: number): void;
     /**
      * data a text string, ArrayBuffer or Blob
      * @param data {string|any}
      */
     send(data: string | any): void;
-    setDebug(debug: any): void;
-    /**
-     * Disable disconnecting retry links
-     * @param disable
-     */
-    disableReConnect(disable?: boolean): void;
-    /**
-     * set reConnect setInterval (default:1000 ms)
-     * @param  {number} interval ms
-     */
-    setReConnectInterval(interval: number): void;
     /**
      * Actively disconnect
      */
@@ -40,12 +60,42 @@ declare class SocketClient {
      */
     disconnect(): void;
     /**
+     * Check if the link is closed
+     * @return {boolean}
+     */
+    isClose(): boolean;
+    /**
+     * Check if the link is connecting
+     * @return {boolean}
+     */
+    isConnecting(): boolean;
+    /**
+     * Check if the link is open
+     * @return {boolean}
+     */
+    isOpen(): boolean;
+    /**
+     * Check if the link is closing
+     * @return {boolean}
+     */
+    isClosing(): boolean;
+    /**
      * Listen to the link success event, with superimposed features
      * @param func {Function}
      */
     onOpen(func: Function): void;
-    _emitOpen(event: any): void;
-    _emitMessage(event: any): void;
+    /**
+     * Listen to the link success event, with superimposed features
+     * @param event {string}
+     * @private
+     */
+    private _emitOpen;
+    /**
+     *
+     * @param event
+     * @private
+     */
+    private _emitMessage;
     /**
      * Listen to message acquisition events, with superimposed features
      * @param func {Function}

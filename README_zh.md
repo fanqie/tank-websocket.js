@@ -126,6 +126,27 @@ twsc.setReConnectInterval(1000)
  * 禁止断开重试链接
  */
 twsc.disableReConnect(true)
+
+/**
+ * 获取原始的 WebSocket 对象 [新增]
+ */
+const ws=twsc.getOriginInstance();
+/**
+ * 检测链接是否关闭 [新增]
+ */
+twsc.isClose();
+/**
+ * 检测链接是否正在连接 [新增]
+ */
+twsc.isConnecting();
+/**
+ * 检测链接是否打开 [新增]
+ */
+twsc.isOpen();
+/**
+ * 检测链接是否正在关闭 [新增]
+ */
+twsc.isClosing();
 ```
 
 ## Apis
