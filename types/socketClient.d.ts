@@ -27,7 +27,7 @@ declare class SocketClient {
      */
     private checkConn;
     /**
-     * Get the Origin WebSocket instance
+     * Get the WebSocket instance
      * @return {WebSocket|null}
      */
     getOriginInstance(): WebSocket | null;

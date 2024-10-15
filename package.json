@@ -1,10 +1,10 @@
 {
   "name": "tank-websocket.js",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "tank-websocket.js is a stable websocket client plugin with some really cool features",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run start-socket-serve && karma start && npm run stop-socket-serve",
+    "test": "karma start ",
     "start-socket-serve": "pm2 start ./test/mockServer.js",
     "stop-socket-serve": "pm2 stop ./test/mockServer.js",
     "build": "npx rollup -c rollup.config.js",

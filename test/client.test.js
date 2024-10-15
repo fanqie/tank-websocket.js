@@ -20,6 +20,7 @@ describe('tank-websocket-client test', function () {
                 conn.onMessage((event) => {
                     console.log("____onMessage____data___", event.data)
                     assert.equal(event.data,data)
+                    assert.equal(coon.isOpen(),true)
 
                     done()
                 })
