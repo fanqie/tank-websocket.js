@@ -7,7 +7,7 @@ describe('SocketClient Subscription Tests', () => {
     beforeEach((done) => {
         const {SocketClient} = window.TankWebSocket
         client = new SocketClient('ws://localhost:19198');
-        console.log("xxxxxxxxx",client)
+
         client.onOpen(() => {
             done();
         });
@@ -24,6 +24,7 @@ describe('SocketClient Subscription Tests', () => {
         const testMessage = 'Hello World';
 
         client.subTopic(topic, (data) => {
+            console.log("xxxxdataxxxxx",data)
             expect(data).to.equal(testMessage);
             done();
         });
@@ -31,6 +32,7 @@ describe('SocketClient Subscription Tests', () => {
         // 等待订阅完成
         setTimeout(() => {
             client.send(testMessage);
+
         }, 100);
     });
 

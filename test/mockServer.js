@@ -30,10 +30,10 @@ wss.on('connection', function connection(ws) {
             // 模拟发送订阅消息
             if (subscriptions.size > 0) {
                 subscriptions.forEach(topic => {
-                    const response = `sub:${JSON.stringify({
+                    const response = JSON.stringify({
                         topic: topic,
                         data: msg
-                    })}`
+                    })
                     console.log('Sending response:', response);
                     ws.send(response);
                 });

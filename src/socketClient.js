@@ -69,7 +69,7 @@ class SocketClient {
      * @private
      */
     _subscribeOnMessageReceive(event) {
-        if (event.data.indexOf("topic") >0) {
+        if (event.data.indexOf("topic") <1) {
             return
         }
         try {
