@@ -15,23 +15,7 @@ class SocketClient {
     interval = 1000
     url = ""
     useReConn = true
-
-    /**
-     * Check the connection status of the WebSocket instance
-     * @private
-     */
-    checkConn() {
-        setTimeout(() => {
-            if (this.useReConn && this.ws && this.ws.readyState > 1 && (new Date().getTime() - this.lastReConnTime) > this.interval) {
-                console.log("reconnect socket=》》》", this.url)
-                this.ws = new WebSocket(this.url)
-            }
-
-            if (this.ws) {
-                this.checkConn()
-            }
-        }, 1000)
-    }
+    topics = []
 
     /**
      * Create a WebSocket instance
@@ -44,6 +28,93 @@ class SocketClient {
         this.url = url
         this.ws = new WebSocket(url)
         this.checkConn()
+        this._defineEvents()
+
+
+        this.onOpen((event) => {
+            if (this.debug) {
+                console.log("socket open", event)
+            }
+            this._sendScribeToServer()
+        })
+
+        this.onClose((event) => {
+            if (this.debug) {
+                console.log("socket close", event)
+            }
+        })
+        this.onMessage((event) => {
+            if (this.debug) {
+                console.log("socket receive", event)
+            }
+            this._subscribeOnMessageReceive(event)
+        })
+        this.onError((event) => {
+            if (this.debug) {
+                console.log("socket exception", event)
+            }
+        })
+
+    }
+
+    _sendScribeToServer() {
+        this.topics.forEach(t => {
+            this.send(`sub:${t.topic}`)
+        })
+    }
+
+    /**
+     * Handle the message received by the WebSocket instance
+     * @param event {MessageEvent}
+     * @private
+     */
+    _subscribeOnMessageReceive(event) {
+        if (event.data.indexOf("sub:") === -1) {
+            return
+        }
+        try {
+            this._subscribeOnMessageHandle(JSON.parse(event.data.substring(4)));
+        }catch (e){
+            console.error("error", e)
+        }
+    }
+
+    /**
+     * Handle the message
+     * @param res {{topic: string, data: string}}
+     * @private
+     */
+    _subscribeOnMessageHandle(res) {
+        console.log("topic", res.topic, "data", res.data)
+        this.topics.forEach(t => {
+            if (t.topic === res.topic) {
+                t.callback(res.data)
+            }
+        })
+    }
+
+    /**
+     * Check the connection status of the WebSocket instance
+     * @private
+     */
+    checkConn() {
+        setTimeout(() => {
+            if (this.useReConn && this.ws && this.ws.readyState > 1 && (new Date().getTime() - this.lastReConnTime) > this.interval) {
+                console.log("reconnect socket=》》》", this.url)
+                this.ws = new WebSocket(this.url)
+                this._defineEvents()
+            }
+            if (this.ws) {
+                this.checkConn()
+            }
+        }, 1000)
+    }
+
+    /**
+     * Define event listeners
+     * @private
+     */
+    _defineEvents() {
         this.ws.addEventListener('message', (event) => {
             this._emitMessage.call(this, event)
         });
@@ -58,29 +129,6 @@ class SocketClient {
         this.ws.addEventListener('error', (event) => {
             this._emitError.call(this, event)
         });
-
-
-        this.onOpen((event) => {
-            if (this.debug) {
-                console.log("socket open", event)
-            }
-        })
-        this.onClose((event) => {
-            if (this.debug) {
-                console.log("socket close", event)
-            }
-        })
-        this.onMessage((event) => {
-            if (this.debug) {
-                console.log("socket receive", event)
-            }
-        })
-        this.onError((event) => {
-            if (this.debug) {
-                console.log("socket exception", event)
-            }
-        })
-
     }
 
     /**
@@ -114,9 +162,10 @@ class SocketClient {
     setReConnectInterval(interval) {
         this.interval = interval
     }
+
     /**
      * data a text string, ArrayBuffer or Blob
-     * @param data {string|any}
+     * @param data {string | ArrayBufferLike | Blob | ArrayBufferView}
      */
     send(data) {
         try {
@@ -126,10 +175,12 @@ class SocketClient {
         }
 
     }
+
     /**
-     * Actively disconnect
+     * Close the link same disconnect
      */
     close() {
+        this.destroyTopics()
         this.useReConn = false
         this.ws.close()
         this.ws = null
@@ -139,10 +190,11 @@ class SocketClient {
             error: new Set(),
             close: new Set(),
         }
+
     }
 
     /**
-     * Actively disconnect
+     * Disconnect the link
      */
     disconnect() {
         this.close()
@@ -179,9 +231,10 @@ class SocketClient {
     isClosing() {
         return this.ws.readyState === WebSocket.CLOSING;
     }
+
     /**
      * Listen to the link success event, with superimposed features
-     * @param func {Function}
+     * @param func {(evt: Event)=>void}
      */
     onOpen(func) {
         if (typeof func === "function") {
@@ -202,7 +255,7 @@ class SocketClient {
 
     /**
      *
-     * @param event
+     * @param event {CloseEvent}
      * @private
      */
     _emitMessage(event) {
@@ -213,7 +266,7 @@ class SocketClient {
 
     /**
      * Listen to message acquisition events, with superimposed features
-     * @param func {Function}
+     * @param func {(evt: MessageEvent)=>void}
      */
     onMessage(func) {
         if (typeof func === "function") {
@@ -231,6 +284,11 @@ class SocketClient {
         }
     }
 
+    /**
+     *
+     * @param event {CloseEvent}
+     * @private
+     */
     _emitError(event) {
         this.events.error.forEach((func) => {
             func(event)
@@ -239,7 +297,7 @@ class SocketClient {
 
     /**
      * Listen for link closing events, with superimposed features
-     * @param func {Function}
+     * @param func {(evt: CloseEvent)=>void}
      */
     onClose(func) {
         if (typeof func === "function") {
@@ -249,7 +307,7 @@ class SocketClient {
 
     /**
      *
-     * @param event
+     * @param event {CloseEvent}
      * @private
      */
     _emitClose(event) {
@@ -284,6 +342,39 @@ class SocketClient {
      */
     offOpenEvent() {
         this.events.open.clear()
+    }
+
+    /**
+     * Subscribe to a topic
+     * @param topic {string}
+     * @param callback {(data: string)=>void}
+     */
+    subTopic(topic, callback) {
+        if (!this.topics.includes(topic)) {
+            this.topics.push({topic, callback})
+            this.send(`sub:${topic}`)
+        }
+    }
+
+    /**
+     * Unsubscribe to a topic
+     * @param topic {string}
+     */
+    unsubTopic(topic) {
+        if (!this.topics.includes(topic)) {
+            this.topics = this.topics.filter(t => t.topic !== topic)
+            this.send(`unsub:${topic}`)
+        }
+    }
+
+    /**
+     * Destroy all topics
+     */
+    destroyTopics() {
+        this.topics.forEach(t => {
+            this.send(`unsub:${t.topic}`)
+        })
+        this.topics = []
     }
 }
 
