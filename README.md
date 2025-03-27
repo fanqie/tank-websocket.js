@@ -144,6 +144,69 @@ twsc.isOpen();
 twsc.isClosing();
 
 ```
+## About Subscription
+tank-websocket.js support subscription, you can use it to subscribe to the server's message, and then receive the message through the callback function.
+
+### The format of the subscription message carrier obtained by the server
+`sub:topicName`
+### The format of the message sent by the server to the client
+`sub:{topic:topicName,data:data}`
+### How to obtain the subscription topic on the server
+Here we use javascript for examples, please implement it yourself in other languages
+```javascript
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({port: 19198});
+
+wss.on('connection', function connection(ws) {
+    const subscriptions = new Set();
+
+    ws.on('message', function incoming(message) {
+        const msg = message.toString();
+
+        if (msg.startsWith('sub:')) {
+            const topic = msg.substring(4);
+            subscriptions.add(topic);
+            console.log('Client subscribed to:', topic);
+            return;
+        }
+
+        if (msg.startsWith('unsub:')) {
+            const topic = msg.substring(6);
+            subscriptions.delete(topic);
+            console.log('Client unsubscribed from:', topic);
+            return;
+        }
+        setInterval(() => {
+            // mock server send message to client
+            if (subscriptions.size > 0) {
+                subscriptions.forEach(topic => {
+                    const response = `sub:${JSON.stringify({
+                        topic: topic,
+                        data: msg
+                    })}`
+                    console.log('Sending response:', response);
+                    ws.send(response);
+                });
+            }
+        }, 1000)
+
+    });
+});
+
+```
+
+### Client Usage
+```javascript
+// subscribe
+twsc.subscribe("test",(data)=>{
+    console.log(data)
+})
+// unsubscribe
+twsc.unsubscribe("test")
+// unsubscribe all
+twsc.unsubscribeAll()
+```
 
 ## Apis
 [socketClient](./types/socketClient.d.ts)

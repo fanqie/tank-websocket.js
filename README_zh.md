@@ -43,6 +43,7 @@ import {SocketClient, useSocketClient} from "tank-websocket.js";
 ### html 标签导入
 
 ```html
+
 <script src="https://unpkg.com/tank-websocket.js/lib/"></script>
 ```
 
@@ -130,7 +131,7 @@ twsc.disableReConnect(true)
 /**
  * 获取原始的 WebSocket 对象 [新增]
  */
-const ws=twsc.getOriginInstance();
+const ws = twsc.getOriginInstance();
 /**
  * 检测链接是否关闭 [新增]
  */
@@ -147,6 +148,74 @@ twsc.isOpen();
  * 检测链接是否正在关闭 [新增]
  */
 twsc.isClosing();
+```
+
+## 关于订阅
+tank-websocket.js支持订阅功能，你可以使用它订阅服务端的消息，然后通过回调函数接收消息。
+### 服务端获取订阅消息载体格式
+`sub:topicName`
+### 服务端发送给客户端消息格式
+`sub:{topic:topicName,data:data}`
+### 服务端如何获取订阅主题
+这里使用javascript进行示例，其他语言请自行实现
+
+```javascript
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({port: 19198});
+
+wss.on('connection', function connection(ws) {
+    const subscriptions = new Set();
+
+    ws.on('message', function incoming(message) {
+        const msg = message.toString();
+
+        if (msg.startsWith('sub:')) {
+            const topic = msg.substring(4);
+            subscriptions.add(topic);
+            console.log('Client subscribed to:', topic);
+            return;
+        }
+
+        if (msg.startsWith('unsub:')) {
+            const topic = msg.substring(6);
+            subscriptions.delete(topic);
+            console.log('Client unsubscribed from:', topic);
+            return;
+        }
+        setInterval(() => {
+            // 模拟发送订阅消息
+            if (subscriptions.size > 0) {
+                subscriptions.forEach(topic => {
+                    const response = `sub:${JSON.stringify({
+                        topic: topic,
+                        data: msg
+                    })}`
+                    console.log('Sending response:', response);
+                    ws.send(response);
+                });
+            }
+        }, 1000)
+
+    });
+});
+
+```
+
+### 客户端使用
+
+```javascript
+import TankWebSocket from "tank-websocket.js";
+
+const twsc = new TankWebSocket.SocketClient('ws://127.0.0.1:19198');
+//订阅一个主题
+twsc.subTopic('topic', (data) => {
+    console.log(data)
+})
+//取消订阅
+twsc.unsubTopic('topic')
+//销毁所有主题
+twsc.destroyTopics()
 ```
 
 ## Apis

@@ -20,18 +20,18 @@ describe('SocketClient Subscription Tests', () => {
     });
 
     it('should subscribe to a topic and receive messages', (done) => {
-        const topic = 'test-topic';
+        const topic = 'test-xxxx';
         const testMessage = 'Hello World';
 
         client.subTopic(topic, (data) => {
             expect(data).to.equal(testMessage);
-             done();
+            done();
         });
 
-        // 增加等待时间，确保订阅完成
+        // 等待订阅完成
         setTimeout(() => {
             client.send(testMessage);
-        }, 100); // 从 100ms 增加到 500ms
+        }, 100);
     });
 
     it('should unsubscribe from a topic and not receive messages', (done) => {
