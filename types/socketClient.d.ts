@@ -21,11 +21,30 @@ declare class SocketClient {
     interval: number;
     url: string;
     useReConn: boolean;
+    topics: any[];
+    _sendScribeToServer(): void;
+    /**
+     * Handle the message received by the WebSocket instance
+     * @param event {MessageEvent}
+     * @private
+     */
+    private _subscribeOnMessageReceive;
+    /**
+     * Handle the message
+     * @param res {{topic: string, data: string}}
+     * @private
+     */
+    private _subscribeOnMessageHandle;
     /**
      * Check the connection status of the WebSocket instance
      * @private
      */
     private checkConn;
+    /**
+     * Define event listeners
+     * @private
+     */
+    private _defineEvents;
     /**
      * Get the WebSocket instance
      * @return {WebSocket|null}
@@ -48,15 +67,15 @@ declare class SocketClient {
     setReConnectInterval(interval: number): void;
     /**
      * data a text string, ArrayBuffer or Blob
-     * @param data {string|any}
+     * @param data {string | ArrayBufferLike | Blob | ArrayBufferView}
      */
-    send(data: string | any): void;
+    send(data: string | ArrayBufferLike | Blob | ArrayBufferView): void;
     /**
-     * Actively disconnect
+     * Close the link same disconnect
      */
     close(): void;
     /**
-     * Actively disconnect
+     * Disconnect the link
      */
     disconnect(): void;
     /**
@@ -81,9 +100,9 @@ declare class SocketClient {
     isClosing(): boolean;
     /**
      * Listen to the link success event, with superimposed features
-     * @param func {Function}
+     * @param func {(evt: Event)=>void}
      */
-    onOpen(func: Function): void;
+    onOpen(func: (evt: Event) => void): void;
     /**
      * Listen to the link success event, with superimposed features
      * @param event {string}
@@ -92,29 +111,34 @@ declare class SocketClient {
     private _emitOpen;
     /**
      *
-     * @param event
+     * @param event {CloseEvent}
      * @private
      */
     private _emitMessage;
     /**
      * Listen to message acquisition events, with superimposed features
-     * @param func {Function}
+     * @param func {(evt: MessageEvent)=>void}
      */
-    onMessage(func: Function): void;
+    onMessage(func: (evt: MessageEvent) => void): void;
     /**
      * Monitor abnormal events, with superimposed features
      * @param func {Function}
      */
     onError(func: Function): void;
-    _emitError(event: any): void;
-    /**
-     * Listen for link closing events, with superimposed features
-     * @param func {Function}
-     */
-    onClose(func: Function): void;
     /**
      *
-     * @param event
+     * @param event {CloseEvent}
+     * @private
+     */
+    private _emitError;
+    /**
+     * Listen for link closing events, with superimposed features
+     * @param func {(evt: CloseEvent)=>void}
+     */
+    onClose(func: (evt: CloseEvent) => void): void;
+    /**
+     *
+     * @param event {CloseEvent}
      * @private
      */
     private _emitClose;
@@ -134,4 +158,19 @@ declare class SocketClient {
      * Clear all listener link success events
      */
     offOpenEvent(): void;
+    /**
+     * Subscribe to a topic
+     * @param topic {string}
+     * @param callback {(data: string)=>void}
+     */
+    subTopic(topic: string, callback: (data: string) => void): void;
+    /**
+     * Unsubscribe to a topic
+     * @param topic {string}
+     */
+    unsubTopic(topic: string): void;
+    /**
+     * Destroy all topics
+     */
+    destroyTopics(): void;
 }

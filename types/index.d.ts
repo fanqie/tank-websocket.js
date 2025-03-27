@@ -4,4 +4,9 @@ declare namespace _default {
 }
 export default _default;
 import SocketClient from "./socketClient";
-declare function useSocketClient(url?: string): any;
+/**
+ * Create a socket connection
+ * @param url
+ * @return {SocketClient}
+ */
+declare function useSocketClient(url?: string): SocketClient;
