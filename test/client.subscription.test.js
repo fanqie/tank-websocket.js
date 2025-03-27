@@ -20,7 +20,7 @@ describe('SocketClient Subscription Tests', () => {
     });
 
     it('should subscribe to a topic and receive messages', (done) => {
-        const topic = 'test-xxxx';
+        const topic = 'test-topic';
         const testMessage = 'Hello World';
 
         client.subTopic(topic, (data) => {

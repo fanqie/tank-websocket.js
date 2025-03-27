@@ -150,7 +150,12 @@ tank-websocket.js support subscription, you can use it to subscribe to the serve
 ### The format of the subscription message carrier obtained by the server
 `sub:topicName`
 ### The format of the message sent by the server to the client
-`sub:{topic:topicName,data:data}`
+```json
+{
+    "topic":"topicName",
+    "data":"dataValue"
+}
+```
 ### How to obtain the subscription topic on the server
 Here we use javascript for examples, please implement it yourself in other languages
 ```javascript
@@ -181,10 +186,10 @@ wss.on('connection', function connection(ws) {
             // mock server send message to client
             if (subscriptions.size > 0) {
                 subscriptions.forEach(topic => {
-                    const response = `sub:${JSON.stringify({
+                    const response = JSON.stringify({
                         topic: topic,
                         data: msg
-                    })}`
+                    })
                     console.log('Sending response:', response);
                     ws.send(response);
                 });

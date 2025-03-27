@@ -69,11 +69,12 @@ class SocketClient {
      * @private
      */
     _subscribeOnMessageReceive(event) {
-        if (event.data.indexOf("sub:") === -1) {
+        if (event.data.indexOf("topic") >0) {
             return
         }
         try {
-            this._subscribeOnMessageHandle(JSON.parse(event.data.substring(4)));
+            const jsonData =JSON.parse(event.data)
+            jsonData.topic&&this._subscribeOnMessageHandle(jsonData);
         }catch (e){
             console.error("error", e)
         }

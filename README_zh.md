@@ -155,7 +155,12 @@ tank-websocket.js支持订阅功能，你可以使用它订阅服务端的消息
 ### 服务端获取订阅消息载体格式
 `sub:topicName`
 ### 服务端发送给客户端消息格式
-`sub:{topic:topicName,data:data}`
+```json
+{
+    "topic":"topicName",
+    "data":"dataValue"
+}
+```
 ### 服务端如何获取订阅主题
 这里使用javascript进行示例，其他语言请自行实现
 
@@ -187,10 +192,10 @@ wss.on('connection', function connection(ws) {
             // 模拟发送订阅消息
             if (subscriptions.size > 0) {
                 subscriptions.forEach(topic => {
-                    const response = `sub:${JSON.stringify({
+                    const response = JSON.stringify({
                         topic: topic,
                         data: msg
-                    })}`
+                    })
                     console.log('Sending response:', response);
                     ws.send(response);
                 });
