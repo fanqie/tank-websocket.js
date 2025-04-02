@@ -204,13 +204,13 @@ wss.on('connection', function connection(ws) {
 ### Client Usage
 ```javascript
 // subscribe
-twsc.subscribe("test",(data)=>{
+twsc.subTopic("test",(data)=>{
     console.log(data)
 })
 // unsubscribe
-twsc.unsubscribe("test")
+twsc.unsubTopic("test")
 // unsubscribe all
-twsc.unsubscribeAll()
+twsc.destroyTopics()
 ```
 
 ## Apis
